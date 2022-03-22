@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Route, Switch, Redirect, useHistory } from 'react-router-dom';
 import { currentUserContext } from '../contexts/CurrentUserContext.js';
 import avatar from '../images/avatar.png';
 import api from '../utils/api.js';
@@ -11,6 +12,8 @@ import EditAvatarPopup from './EditAvatarPopup.jsx';
 import AddPlacePopup from './AddPlacePopup.jsx';
 import AcceptDeleteCardPopup from './AcceptDeleteCardPopup.jsx';
 import Loader from './Loader.jsx';
+import Login from './Login.jsx';
+import Register from './Register.jsx';
 
 function App() {
   // стейты:
@@ -152,36 +155,46 @@ function App() {
     <div className="page" onKeyDown={handleKeyDown} tabIndex="0">
       <currentUserContext.Provider value={currentUser}>
         <Header />
-        <Main
-          cards={cards}
-          onEditProfile={handleEditProfileClick}
-          onAddPlace={handleAddPlaceClick}
-          onEditAvatar={handleEditAvatarClick}
-          onCardClick={handleCardClick}
-          onCardDelete={handleDeleteCardClick}
-          onCardLike={handleCardLike} />
+        <Switch>
+          <Route path="/sign-in">
+            <Login />
+          </Route>
+          <Route path="/sign-up">
+            <Register />
+          </Route>
+          <Route exact path="/">
+            <Main
+              cards={cards}
+              onEditProfile={handleEditProfileClick}
+              onAddPlace={handleAddPlaceClick}
+              onEditAvatar={handleEditAvatarClick}
+              onCardClick={handleCardClick}
+              onCardDelete={handleDeleteCardClick}
+              onCardLike={handleCardLike} />
+          </Route>
+          <EditProfilePopup
+            isOpen={isEditProfilePopupOpen}
+            onClose={closeAllPopups}
+            onUpdateUser={handleUpdateUser} />
+          <AddPlacePopup
+            isOpen={isAddPlacePopupOpen}
+            onClose={closeAllPopups}
+            onAddPlace={handleAddPlace} />
+          <EditAvatarPopup
+            isOpen={isEditAvatarPopupOpen}
+            onClose={closeAllPopups}
+            onUpdateAvatar={handleUpdateAvatar} />
+          <AcceptDeleteCardPopup
+            isOpen={isDeletePopupOpen}
+            onClose={closeAllPopups}
+            isAccept={handleDeleteCard} />
+          <ImagePopup
+            card={selectedCard}
+            isOpen={isImagePopupOpen}
+            onClose={closeAllPopups} />
+          <Loader isOpen={isLoader}/>
+        </Switch>
         <Footer />
-        <EditProfilePopup
-          isOpen={isEditProfilePopupOpen}
-          onClose={closeAllPopups}
-          onUpdateUser={handleUpdateUser} />
-        <AddPlacePopup
-          isOpen={isAddPlacePopupOpen}
-          onClose={closeAllPopups}
-          onAddPlace={handleAddPlace} />
-        <EditAvatarPopup
-          isOpen={isEditAvatarPopupOpen}
-          onClose={closeAllPopups}
-          onUpdateAvatar={handleUpdateAvatar} />
-        <AcceptDeleteCardPopup
-          isOpen={isDeletePopupOpen}
-          onClose={closeAllPopups}
-          isAccept={handleDeleteCard} />
-        <ImagePopup
-          card={selectedCard}
-          isOpen={isImagePopupOpen}
-          onClose={closeAllPopups} />
-        <Loader isOpen={isLoader}/>
       </currentUserContext.Provider>
     </div>
   );
