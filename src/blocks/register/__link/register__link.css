@@ -7,12 +7,15 @@
   font-weight: 400;
   color: #FFFFFF;
   display: block;
+  transition: opacity .3s ease;
+}
+
+.register__link:hover {
+  opacity: 0.85;
 }
 
 @media screen and (max-width: 500px) {
   .register__link {
     margin-top: 20px;
-    font-size: 20px;
-    line-height: 1.2;
   }
 }

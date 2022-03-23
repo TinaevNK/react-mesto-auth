@@ -96,6 +96,8 @@
 @import url(./blocks/popup/__info/popup__info.css);
 /* заголовок формы */
 @import url(./blocks/popup/__title/popup__title.css);
+/* модификатор для центрового заголовка */
+@import url(./blocks/popup/__title/_center/popup__title_center.css);
 /* поле формы */
 @import url(./blocks/popup/__label/popup__label.css);
 /* окно ввода */
@@ -114,6 +116,12 @@
 @import url(./blocks/popup/__error/popup__error.css);
 /* открывающий модификатор для ошибки */
 @import url(./blocks/popup/__error/_opened/popup__error_opened.css);
+/* статус запроса шаблон */
+@import url(./blocks/popup/__status/popup__status.css);
+/* модификатор на успешный запрос */
+@import url(./blocks/popup/__status/_success/popup__status_success.css);
+/* модификатор на неудачный запрос */
+@import url(./blocks/popup/__status/_fail/popup__status_fail.css);
 
 /* страница авторизации */
 @import url(./blocks/register/register.css);

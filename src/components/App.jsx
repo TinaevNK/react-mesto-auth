@@ -14,6 +14,7 @@ import AcceptDeleteCardPopup from './AcceptDeleteCardPopup.jsx';
 import Loader from './Loader.jsx';
 import Login from './Login.jsx';
 import Register from './Register.jsx';
+import InfoTooltip from './InfoTooltip.jsx';
 
 function App() {
   // стейты:
@@ -172,29 +173,30 @@ function App() {
               onCardDelete={handleDeleteCardClick}
               onCardLike={handleCardLike} />
           </Route>
-          <EditProfilePopup
-            isOpen={isEditProfilePopupOpen}
-            onClose={closeAllPopups}
-            onUpdateUser={handleUpdateUser} />
-          <AddPlacePopup
-            isOpen={isAddPlacePopupOpen}
-            onClose={closeAllPopups}
-            onAddPlace={handleAddPlace} />
-          <EditAvatarPopup
-            isOpen={isEditAvatarPopupOpen}
-            onClose={closeAllPopups}
-            onUpdateAvatar={handleUpdateAvatar} />
-          <AcceptDeleteCardPopup
-            isOpen={isDeletePopupOpen}
-            onClose={closeAllPopups}
-            isAccept={handleDeleteCard} />
-          <ImagePopup
-            card={selectedCard}
-            isOpen={isImagePopupOpen}
-            onClose={closeAllPopups} />
-          <Loader isOpen={isLoader}/>
         </Switch>
         <Footer />
+        <InfoTooltip />
+        <Loader isOpen={isLoader}/>
+        <EditProfilePopup
+          isOpen={isEditProfilePopupOpen}
+          onClose={closeAllPopups}
+          onUpdateUser={handleUpdateUser} />
+        <AddPlacePopup
+          isOpen={isAddPlacePopupOpen}
+          onClose={closeAllPopups}
+          onAddPlace={handleAddPlace} />
+        <EditAvatarPopup
+          isOpen={isEditAvatarPopupOpen}
+          onClose={closeAllPopups}
+          onUpdateAvatar={handleUpdateAvatar} />
+        <AcceptDeleteCardPopup
+          isOpen={isDeletePopupOpen}
+          onClose={closeAllPopups}
+          isAccept={handleDeleteCard} />
+        <ImagePopup
+          card={selectedCard}
+          isOpen={isImagePopupOpen}
+          onClose={closeAllPopups} />
       </currentUserContext.Provider>
     </div>
   );
