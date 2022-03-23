@@ -15,6 +15,7 @@ import Loader from './Loader.jsx';
 import Login from './Login.jsx';
 import Register from './Register.jsx';
 import InfoTooltip from './InfoTooltip.jsx';
+import ProtectedRoute from './ProtectedRoute.jsx';
 
 function App() {
   // стейты:
@@ -37,7 +38,10 @@ function App() {
   // карточки
   const [cards, setCards] = useState([]);
   // лоадер
-  const [isLoader, setLoader] = React.useState(false);
+  const [isLoader, setLoader] = useState(false);
+
+  // стейты для входа
+  const [loggedIn, setLoggedIn] =  useState(false);
 
   useEffect(() => {
     setLoader(true);
@@ -157,21 +161,24 @@ function App() {
       <currentUserContext.Provider value={currentUser}>
         <Header />
         <Switch>
+          <ProtectedRoute exact path="/"
+            component={Main}
+            loggedIn={loggedIn}
+            cards={cards}
+            onEditProfile={handleEditProfileClick}
+            onAddPlace={handleAddPlaceClick}
+            onEditAvatar={handleEditAvatarClick}
+            onCardClick={handleCardClick}
+            onCardDelete={handleDeleteCardClick}
+            onCardLike={handleCardLike} />
           <Route path="/sign-in">
             <Login />
           </Route>
           <Route path="/sign-up">
             <Register />
           </Route>
-          <Route exact path="/">
-            <Main
-              cards={cards}
-              onEditProfile={handleEditProfileClick}
-              onAddPlace={handleAddPlaceClick}
-              onEditAvatar={handleEditAvatarClick}
-              onCardClick={handleCardClick}
-              onCardDelete={handleDeleteCardClick}
-              onCardLike={handleCardLike} />
+          <Route>
+            {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}
           </Route>
         </Switch>
         <Footer />
