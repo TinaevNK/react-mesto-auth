@@ -157,6 +157,10 @@ function App() {
     }
   }
 
+  function handleRegister({ email, password }) {
+
+  }
+
   return (
     <div className="page" onKeyDown={handleKeyDown} tabIndex="0">
       <currentUserContext.Provider value={currentUser}>
@@ -176,7 +180,7 @@ function App() {
             <Login />
           </Route>
           <Route path="/sign-up">
-            <Register />
+            <Register handleRegister={handleRegister}/>
           </Route>
           <Route>
             {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}
