@@ -199,10 +199,18 @@ function App() {
     .finally(() => setLoader(false))
   }
 
+  // выход
+  const handleSignOut = () => {
+    // localStorage.removeItem('jwt');
+    setEmail('');
+    setLoggedIn(false);
+    history.push('/sign-in');
+  }
+
   return (
     <div className="page" onKeyDown={handleKeyDown} tabIndex="0">
       <currentUserContext.Provider value={currentUser}>
-        <Header loggedIn={loggedIn} email={email}/>
+        <Header loggedIn={loggedIn} email={email} onSignOut={handleSignOut}/>
         <Switch>
           <ProtectedRoute exact path="/"
             component={Main}
@@ -221,9 +229,6 @@ function App() {
           <Route path="/sign-up">
             <Register
               handleRegister={handleRegister} />
-          </Route>
-          <Route>
-            {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}
           </Route>
         </Switch>
         <Footer />
