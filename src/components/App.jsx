@@ -41,7 +41,7 @@ function App() {
   const [isLoader, setLoader] = useState(false);
 
   // стейты для входа
-  const [loggedIn, setLoggedIn] =  useState(true);
+  const [loggedIn, setLoggedIn] =  useState(false);
   const [email, setEmail] = useState('');
 
   useEffect(() => {
