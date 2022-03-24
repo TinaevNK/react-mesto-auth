@@ -169,6 +169,7 @@ function App() {
 
   // регистрация пользователя
   function handleRegister({ email, password }) {
+    setLoader(true);
     auth.register(email, password)
     .then(() => {
       handleInfoTooltip(true);
@@ -176,13 +177,32 @@ function App() {
     })
     .catch(err => {
       handleInfoTooltip(false);
-      console.log(err)});
+      console.log(err);
+    })
+    .finally(() => setLoader(false))
+  }
+
+  // вход
+  function handleLogin({ email, password }) {
+    setLoader(true);
+    auth.login(email, password)
+    .then(() => {
+      setEmail(email);
+      setLoggedIn(true);
+      // localStorage.setItem('jwt', jwt.token);
+      history.push('/');
+    })
+    .catch(err => {
+      handleInfoTooltip(false);
+      console.log(err);
+    })
+    .finally(() => setLoader(false))
   }
 
   return (
     <div className="page" onKeyDown={handleKeyDown} tabIndex="0">
       <currentUserContext.Provider value={currentUser}>
-        <Header loggedIn={loggedIn}/>
+        <Header loggedIn={loggedIn} email={email}/>
         <Switch>
           <ProtectedRoute exact path="/"
             component={Main}
@@ -195,10 +215,12 @@ function App() {
             onCardDelete={handleDeleteCardClick}
             onCardLike={handleCardLike} />
           <Route path="/sign-in">
-            <Login />
+            <Login
+              onLogin={handleLogin} />
           </Route>
           <Route path="/sign-up">
-            <Register handleRegister={handleRegister}/>
+            <Register
+              handleRegister={handleRegister} />
           </Route>
           <Route>
             {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}

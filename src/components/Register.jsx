@@ -15,12 +15,12 @@ export default function Register({handleRegister}) {
     setRegisterData({
       ...registerData,
       [name]: value
-    })
+    });
   }
 
   function handleSubmit(e) {
     e.preventDefault();
-    handleRegister(registerData)
+    handleRegister(registerData);
   }
 
   return (
@@ -29,10 +29,10 @@ export default function Register({handleRegister}) {
       <form name="form_register" className="register__form" onSubmit={handleSubmit}>
         <fieldset className="register__fieldset">
           <label className="register__label">
-            <input className="register__input" type="text" placeholder="Email" name="email" value={email} onChange={handleChange}></input>
+            <input className="register__input" type="text" placeholder="Email" name="email" required value={email} onChange={handleChange}></input>
           </label>
           <label className="register__label">
-            <input className="register__input" type="password" placeholder="Пароль" name="password" value={password} onChange={handleChange}></input>
+            <input className="register__input" type="password" placeholder="Пароль" name="password" required value={password} onChange={handleChange}></input>
           </label>
         </fieldset>
         <button type="submit" className="register__button">Зарегистрироваться</button>
