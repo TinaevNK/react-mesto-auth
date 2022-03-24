@@ -41,7 +41,8 @@ function App() {
   const [isLoader, setLoader] = useState(false);
 
   // стейты для входа
-  const [loggedIn, setLoggedIn] =  useState(false);
+  const [loggedIn, setLoggedIn] =  useState(true);
+  const [email, setEmail] = useState('');
 
   useEffect(() => {
     setLoader(true);
@@ -159,7 +160,7 @@ function App() {
   return (
     <div className="page" onKeyDown={handleKeyDown} tabIndex="0">
       <currentUserContext.Provider value={currentUser}>
-        <Header />
+        <Header loggedIn={loggedIn}/>
         <Switch>
           <ProtectedRoute exact path="/"
             component={Main}

@@ -22,6 +22,14 @@
 @import url(./blocks/header/__logo/header__logo.css);
 /* ссылка на логотипе, с заделом на будущее */
 @import url(./blocks/header/__logo-link/header__logo-link.css);
+/* контейнер с email и кнопкой выйти */
+@import url(./blocks/header/__info/header__info.css);
+/* email */
+@import url(./blocks/header/__email/header__email.css);
+/* кнопка выйти */
+@import url(./blocks/header/__button/header__button.css);
+/* ссылка вход/регистрация */
+@import url(./blocks/header/__link/header__link.css);
 
 /* контентная часть сайта */
 @import url(./blocks/main/main.css);
