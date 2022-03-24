@@ -3,6 +3,7 @@ import { Route, Switch, Redirect, useHistory } from 'react-router-dom';
 import { currentUserContext } from '../contexts/CurrentUserContext.js';
 import avatar from '../images/avatar.png';
 import api from '../utils/api.js';
+import * as auth from '../utils/auth.js';
 import Footer from './Footer.jsx';
 import Header from './Header.jsx';
 import ImagePopup from './ImagePopup.jsx';
@@ -18,6 +19,8 @@ import InfoTooltip from './InfoTooltip.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
 
 function App() {
+  const history = useHistory();
+
   // стейты:
   // открытие попапа редактирования профиля
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
@@ -39,9 +42,11 @@ function App() {
   const [cards, setCards] = useState([]);
   // лоадер
   const [isLoader, setLoader] = useState(false);
+  // успех/неудача
+  const [infoTooltipShow, setInfoTooltipShow] = useState({ isOpen: false, successful: false });
 
   // стейты для входа
-  const [loggedIn, setLoggedIn] =  useState(true);
+  const [loggedIn, setLoggedIn] =  useState(false);
   const [email, setEmail] = useState('');
 
   useEffect(() => {
@@ -73,6 +78,7 @@ function App() {
     setIsEditAvatarPopupOpen(false);
     setIsImagePopupOpen(false);
     setIsDeletePopupOpen(false);
+    setInfoTooltipShow({ isOpen: false, successful: false })
   }
 
   // функция открытия на полный экран картинки
@@ -157,8 +163,20 @@ function App() {
     }
   }
 
-  function handleRegister({ email, password }) {
+  function handleInfoTooltip(res) {
+    setInfoTooltipShow({ isOpen: true, successful: res })
+  }
 
+  // регистрация пользователя
+  function handleRegister({ email, password }) {
+    auth.register(email, password)
+    .then(() => {
+      handleInfoTooltip(true);
+      history.push('/sign-in');
+    })
+    .catch(err => {
+      handleInfoTooltip(false);
+      console.log(err)});
   }
 
   return (
@@ -187,8 +205,11 @@ function App() {
           </Route>
         </Switch>
         <Footer />
-        <InfoTooltip />
-        <Loader isOpen={isLoader}/>
+        <InfoTooltip
+          onClose={closeAllPopups}
+          status={infoTooltipShow} />
+        <Loader
+          isOpen={isLoader} />
         <EditProfilePopup
           isOpen={isEditProfilePopupOpen}
           onClose={closeAllPopups}
