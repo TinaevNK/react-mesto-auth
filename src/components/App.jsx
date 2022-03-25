@@ -56,7 +56,7 @@ function App() {
       auth.checkToken(jwt)
       .then(data => {
         if (data) {
-          setEmail(data.email);
+          setEmail(data.data.email);
           setLoggedIn(true);
           history.push('/');
         }
@@ -68,12 +68,12 @@ function App() {
   useEffect(() => {
     setLoader(true);
     api.renderUserAndCards()
-    .then(([dataUserInfo, dataCards]) => {
-      setCurrentUser(dataUserInfo);
-      setCards(dataCards);
-    })
-    .catch((err) => console.log(err))
-    .finally(() => setLoader(false))
+      .then(([dataUserInfo, dataCards]) => {
+        setCurrentUser(dataUserInfo);
+        setCards(dataCards);
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setLoader(false))
   }, [])
 
   function handleEditProfileClick() {
@@ -128,37 +128,37 @@ function App() {
 
     if (!isLiked) {
       api.setLike(card)
-      .then(newCard => {
-        setCards(state => state.map(c => c._id === card._id ? newCard : c))
-      })
-      .catch(err => console.log(err))
-    } else {
-      api.deleteLike(card)
-      .then(newCard => {
-        setCards(state => state.map(c => c._id === card._id ? newCard : c))
-      })
-      .catch(err => console.log(err))
-    }
+        .then(newCard => {
+          setCards(state => state.map(c => c._id === card._id ? newCard : c))
+        })
+        .catch(err => console.log(err))
+      } else {
+        api.deleteLike(card)
+        .then(newCard => {
+          setCards(state => state.map(c => c._id === card._id ? newCard : c))
+        })
+        .catch(err => console.log(err))
+      }
   }
 
   // отправка данных пользователя на сервер
   function handleUpdateUser(info) {
     setLoader(true);
     api.setUserInfo(info)
-    .then((newInfo) => { setCurrentUser(newInfo) })
-    .then(() => { closeAllPopups() })
-    .catch(err => console.log(err))
-    .finally(() => setLoader(false))
+      .then(newInfo => { setCurrentUser(newInfo) })
+      .then(() => { closeAllPopups() })
+      .catch(err => console.log(err))
+      .finally(() => setLoader(false))
   }
 
   // отправка аватара пользователя на сервер
   function handleUpdateAvatar(input) {
     setLoader(true);
-    api.setUserAvatar(input)
-    .then(newInfo => { setCurrentUser(newInfo) })
-    .then(() => { closeAllPopups() })
-    .catch(err => console.log(err))
-    .finally(() => setLoader(false))
+      api.setUserAvatar(input)
+      .then(newInfo => { setCurrentUser(newInfo) })
+      .then(() => { closeAllPopups() })
+      .catch(err => console.log(err))
+      .finally(() => setLoader(false))
   }
 
   // отправка новой карточки и обновление стейта
@@ -175,7 +175,7 @@ function App() {
 
   function handleKeyDown(e) {
     if (e.key === 'Escape') {
-      closeAllPopups()
+      closeAllPopups();
     }
   }
 
@@ -187,32 +187,36 @@ function App() {
   function handleRegister({ email, password }) {
     setLoader(true);
     auth.register(email, password)
-    .then(() => {
-      handleInfoTooltip(true);
-      history.push('/sign-in');
-    })
-    .catch(err => {
-      handleInfoTooltip(false);
-      console.log(err);
-    })
-    .finally(() => setLoader(false))
+      .then(data => {
+        if (data) {
+          handleInfoTooltip(true);
+          history.push('/sign-in');
+        }
+      })
+      .catch(err => {
+        handleInfoTooltip(false);
+        console.log(err);
+      })
+      .finally(() => setLoader(false))
   }
 
   // вход
   function handleLogin({ email, password }) {
     setLoader(true);
     auth.login(email, password)
-    .then((jwt) => {
-      setEmail(email);
-      setLoggedIn(true);
-      localStorage.setItem('jwt', jwt.token);
-      history.push('/');
-    })
-    .catch(err => {
-      handleInfoTooltip(false);
-      console.log(err);
-    })
-    .finally(() => setLoader(false))
+      .then(jwt => {
+        if (jwt.token) { // на счёт этого if неуверен, возможно он лишний и можно без него, ведь условие проверки ответа лежит в логике auth.js
+          setEmail(email);
+          setLoggedIn(true);
+          localStorage.setItem('jwt', jwt.token);
+          history.push('/');
+        }
+      })
+      .catch(err => {
+        handleInfoTooltip(false);
+        console.log(err);
+      })
+      .finally(() => setLoader(false))
   }
 
   // выход
