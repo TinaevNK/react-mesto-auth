@@ -10,10 +10,15 @@ export default function Header({ loggedIn, email, onSignOut }) {
         <img src={logo} alt="логотип" className="header__logo" />
       </Link>
       {loggedIn ? (
+        <>
           <div className="header__info">
             <p className="header__email">{email}</p>
             <button className="header__button" onClick={onSignOut}>Выйти</button>
+
           </div>
+          {/* <button className="header__burger-button"></button> */}
+          {/* <button className="header__burger-close"></button> */}
+        </>
       ) : (
             <Link className="header__link" to={pathname === "/sign-in" ? "/sign-up" : "/sign-in"}>
               {pathname === "/sign-in" ? "Регистрация" : "Войти"}
