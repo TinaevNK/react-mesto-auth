@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Route, Switch, Redirect, useHistory } from 'react-router-dom';
+import { Route, Switch, useHistory } from 'react-router-dom';
 import { currentUserContext } from '../contexts/CurrentUserContext.js';
 import avatar from '../images/avatar.png';
 import api from '../utils/api.js';
@@ -48,6 +48,22 @@ function App() {
   // стейты для входа
   const [loggedIn, setLoggedIn] =  useState(false);
   const [email, setEmail] = useState('');
+
+  // проверка токена и авторизация пользователя
+  useEffect(() => {
+    const jwt = localStorage.getItem('jwt');
+    if (jwt) {
+      auth.checkToken(jwt)
+      .then(data => {
+        if (data) {
+          setEmail(data.email);
+          setLoggedIn(true);
+          history.push('/');
+        }
+      })
+      .catch(err => console.log(err))
+    }
+  }, [history]);
 
   useEffect(() => {
     setLoader(true);
@@ -186,10 +202,10 @@ function App() {
   function handleLogin({ email, password }) {
     setLoader(true);
     auth.login(email, password)
-    .then(() => {
+    .then((jwt) => {
       setEmail(email);
       setLoggedIn(true);
-      // localStorage.setItem('jwt', jwt.token);
+      localStorage.setItem('jwt', jwt.token);
       history.push('/');
     })
     .catch(err => {
@@ -201,7 +217,7 @@ function App() {
 
   // выход
   const handleSignOut = () => {
-    // localStorage.removeItem('jwt');
+    localStorage.removeItem('jwt');
     setEmail('');
     setLoggedIn(false);
     history.push('/sign-in');
@@ -210,7 +226,10 @@ function App() {
   return (
     <div className="page" onKeyDown={handleKeyDown} tabIndex="0">
       <currentUserContext.Provider value={currentUser}>
-        <Header loggedIn={loggedIn} email={email} onSignOut={handleSignOut}/>
+        <Header
+          loggedIn={loggedIn}
+          email={email}
+          onSignOut={handleSignOut} />
         <Switch>
           <ProtectedRoute exact path="/"
             component={Main}
@@ -223,12 +242,10 @@ function App() {
             onCardDelete={handleDeleteCardClick}
             onCardLike={handleCardLike} />
           <Route path="/sign-in">
-            <Login
-              onLogin={handleLogin} />
+            <Login onLogin={handleLogin} />
           </Route>
           <Route path="/sign-up">
-            <Register
-              handleRegister={handleRegister} />
+            <Register handleRegister={handleRegister} />
           </Route>
         </Switch>
         <Footer />
