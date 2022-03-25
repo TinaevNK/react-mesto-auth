@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Route, Switch, Redirect, useHistory } from 'react-router-dom';
+import { Route, Switch, useHistory } from 'react-router-dom';
 import { currentUserContext } from '../contexts/CurrentUserContext.js';
 import avatar from '../images/avatar.png';
 import api from '../utils/api.js';
+import * as auth from '../utils/auth.js';
 import Footer from './Footer.jsx';
 import Header from './Header.jsx';
 import ImagePopup from './ImagePopup.jsx';
@@ -18,6 +19,8 @@ import InfoTooltip from './InfoTooltip.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
 
 function App() {
+  const history = useHistory();
+
   // стейты:
   // открытие попапа редактирования профиля
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
@@ -39,10 +42,28 @@ function App() {
   const [cards, setCards] = useState([]);
   // лоадер
   const [isLoader, setLoader] = useState(false);
+  // успех/неудача
+  const [infoTooltipShow, setInfoTooltipShow] = useState({ isOpen: false, successful: false });
 
   // стейты для входа
-  const [loggedIn, setLoggedIn] =  useState(true);
+  const [loggedIn, setLoggedIn] =  useState(false);
   const [email, setEmail] = useState('');
+
+  // проверка токена и авторизация пользователя
+  useEffect(() => {
+    const jwt = localStorage.getItem('jwt');
+    if (jwt) {
+      auth.checkToken(jwt)
+      .then(data => {
+        if (data) {
+          setEmail(data.email);
+          setLoggedIn(true);
+          history.push('/');
+        }
+      })
+      .catch(err => console.log(err))
+    }
+  }, [history]);
 
   useEffect(() => {
     setLoader(true);
@@ -73,6 +94,7 @@ function App() {
     setIsEditAvatarPopupOpen(false);
     setIsImagePopupOpen(false);
     setIsDeletePopupOpen(false);
+    setInfoTooltipShow({ isOpen: false, successful: false })
   }
 
   // функция открытия на полный экран картинки
@@ -157,14 +179,57 @@ function App() {
     }
   }
 
-  function handleRegister({ email, password }) {
+  function handleInfoTooltip(res) {
+    setInfoTooltipShow({ isOpen: true, successful: res })
+  }
 
+  // регистрация пользователя
+  function handleRegister({ email, password }) {
+    setLoader(true);
+    auth.register(email, password)
+    .then(() => {
+      handleInfoTooltip(true);
+      history.push('/sign-in');
+    })
+    .catch(err => {
+      handleInfoTooltip(false);
+      console.log(err);
+    })
+    .finally(() => setLoader(false))
+  }
+
+  // вход
+  function handleLogin({ email, password }) {
+    setLoader(true);
+    auth.login(email, password)
+    .then((jwt) => {
+      setEmail(email);
+      setLoggedIn(true);
+      localStorage.setItem('jwt', jwt.token);
+      history.push('/');
+    })
+    .catch(err => {
+      handleInfoTooltip(false);
+      console.log(err);
+    })
+    .finally(() => setLoader(false))
+  }
+
+  // выход
+  const handleSignOut = () => {
+    localStorage.removeItem('jwt');
+    setEmail('');
+    setLoggedIn(false);
+    history.push('/sign-in');
   }
 
   return (
     <div className="page" onKeyDown={handleKeyDown} tabIndex="0">
       <currentUserContext.Provider value={currentUser}>
-        <Header loggedIn={loggedIn}/>
+        <Header
+          loggedIn={loggedIn}
+          email={email}
+          onSignOut={handleSignOut} />
         <Switch>
           <ProtectedRoute exact path="/"
             component={Main}
@@ -177,18 +242,18 @@ function App() {
             onCardDelete={handleDeleteCardClick}
             onCardLike={handleCardLike} />
           <Route path="/sign-in">
-            <Login />
+            <Login onLogin={handleLogin} />
           </Route>
           <Route path="/sign-up">
-            <Register handleRegister={handleRegister}/>
-          </Route>
-          <Route>
-            {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}
+            <Register handleRegister={handleRegister} />
           </Route>
         </Switch>
         <Footer />
-        <InfoTooltip />
-        <Loader isOpen={isLoader}/>
+        <InfoTooltip
+          onClose={closeAllPopups}
+          status={infoTooltipShow} />
+        <Loader
+          isOpen={isLoader} />
         <EditProfilePopup
           isOpen={isEditProfilePopupOpen}
           onClose={closeAllPopups}

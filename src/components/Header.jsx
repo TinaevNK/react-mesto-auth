@@ -1,7 +1,7 @@
 import logo from "../images/logo.svg";
 import { Link, useLocation } from "react-router-dom";
 
-export default function Header({loggedIn}) {
+export default function Header({ loggedIn, email, onSignOut }) {
   const { pathname } = useLocation();
 
   return(
@@ -11,8 +11,8 @@ export default function Header({loggedIn}) {
       </Link>
       {loggedIn ? (
           <div className="header__info">
-            <p className="header__email">email@mail.com</p>
-            <button className="header__button">Выйти</button>
+            <p className="header__email">{email}</p>
+            <button className="header__button" onClick={onSignOut}>Выйти</button>
           </div>
       ) : (
             <Link className="header__link" to={pathname === "/sign-in" ? "/sign-up" : "/sign-in"}>
