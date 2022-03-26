@@ -1,0 +1,14 @@
+.register__label {
+  margin-bottom: 17px;
+  display: flex;
+}
+
+.register__label:last-of-type {
+  margin-bottom: 216px;
+}
+
+@media screen and (max-width: 500px) {
+  .register__label:last-of-type {
+    margin-bottom: 173px;
+  }
+}
