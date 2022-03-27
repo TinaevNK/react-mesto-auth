@@ -28,4 +28,3 @@ export default function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar }) {
     </PopupWithForm>
   )
 }
-

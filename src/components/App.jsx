@@ -35,13 +35,13 @@ function App() {
   // открытие попапа удаления карточки
   const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
   // данные для удалённой карточки
-  const [cardDelete, isCardDelete] = useState({});
+  const [cardDelete, setCardDelete] = useState({});
   // данные пользователя
   const [currentUser, setCurrentUser] = useState({ name: 'Имя пользователя', about: 'О пользователе', avatar: avatar});
   // карточки
   const [cards, setCards] = useState([]);
   // лоадер
-  const [isLoader, setLoader] = useState(false);
+  const [isLoader, setIsLoader] = useState(false);
   // успех/неудача
   const [infoTooltipShow, setInfoTooltipShow] = useState({ isOpen: false, successful: false });
 
@@ -68,30 +68,22 @@ function App() {
   // если залогинены - получаем карточки и информацию о пользователе
   useEffect(() => {
     if (loggedIn) {
-      setLoader(true);
+      setIsLoader(true);
       api.renderUserAndCards()
         .then(([dataUserInfo, dataCards]) => {
           setCurrentUser(dataUserInfo);
           setCards(dataCards);
         })
         .catch((err) => console.log(err))
-        .finally(() => setLoader(false))
+        .finally(() => setIsLoader(false))
     }
   }, [loggedIn])
 
-  // обработчик на страницу при нажатии ESC
-  useEffect(() => {
-    const closeByEscape = (e) => {
-      if (e.key === 'Escape') {
-        closeAllPopups();
-      }
+  function handleKeyDown(e) {
+    if (e.key === 'Escape') {
+      closeAllPopups()
     }
-    // Павел, надеюсь правильно понял) Иначе пришлось бы отдельно на каждый попап навешивать...(если так правильно - исправлю в следующей итерации)
-    // Объявляем функцию внутри useEffect, чтобы она не теряла свою ссылку при обновлении компонента.
-    document.addEventListener('keydown', closeByEscape)
-    // Удаляем обработчик в функции, которую возвращает useEffect().
-    return () => document.removeEventListener('keydown', closeByEscape)
-}, [])
+  }
 
   function handleEditProfileClick() {
     setIsEditProfilePopupOpen(true);
@@ -122,20 +114,20 @@ function App() {
 
    // функция слушатель на клик по корзинке, чтобы открыть попап
   function handleDeleteCardClick(data) {
-    isCardDelete(data)
+    setCardDelete(data)
     setIsDeletePopupOpen(true);
   }
 
   // ф-ция управляет удалением карточки
   function handleDeleteCard() {
-    setLoader(true);
+    setIsLoader(true);
     api.deleteCard(cardDelete)
       .then(() => {
         setCards((state) => state.filter(item => item._id !== cardDelete._id))
       })
       .then(() => closeAllPopups())
       .catch(err => console.log(err))
-      .finally(() => setLoader(false))
+      .finally(() => setIsLoader(false))
   }
 
   // функция постановки и снятия лайка
@@ -160,34 +152,34 @@ function App() {
 
   // отправка данных пользователя на сервер
   function handleUpdateUser(info) {
-    setLoader(true);
+    setIsLoader(true);
     api.setUserInfo(info)
       .then(newInfo => { setCurrentUser(newInfo) })
       .then(() => { closeAllPopups() })
       .catch(err => console.log(err))
-      .finally(() => setLoader(false))
+      .finally(() => setIsLoader(false))
   }
 
   // отправка аватара пользователя на сервер
   function handleUpdateAvatar(input) {
-    setLoader(true);
+    setIsLoader(true);
       api.setUserAvatar(input)
       .then(newInfo => { setCurrentUser(newInfo) })
       .then(() => { closeAllPopups() })
       .catch(err => console.log(err))
-      .finally(() => setLoader(false))
+      .finally(() => setIsLoader(false))
   }
 
   // отправка новой карточки и обновление стейта
   function handleAddPlace(data) {
-    setLoader(true);
+    setIsLoader(true);
     api.addCard(data)
       .then((newCard) => {
         setCards([newCard, ...cards]);
         closeAllPopups();
       })
       .catch(err => console.log(err))
-      .finally(() => setLoader(false))
+      .finally(() => setIsLoader(false))
   }
 
   function handleInfoTooltip(res) {
@@ -196,7 +188,7 @@ function App() {
 
   // регистрация пользователя
   function handleRegister({ email, password }) {
-    setLoader(true);
+    setIsLoader(true);
     auth.register(email, password)
       .then(data => {
         if (data) {
@@ -208,12 +200,12 @@ function App() {
         handleInfoTooltip(false);
         console.log(err);
       })
-      .finally(() => setLoader(false))
+      .finally(() => setIsLoader(false))
   }
 
   // вход
   function handleLogin({ email, password }) {
-    setLoader(true);
+    setIsLoader(true);
     auth.login(email, password)
       .then(jwt => {
         if (jwt.token) {
@@ -227,7 +219,7 @@ function App() {
         handleInfoTooltip(false);
         console.log(err);
       })
-      .finally(() => setLoader(false))
+      .finally(() => setIsLoader(false))
   }
 
   // выход
@@ -238,8 +230,27 @@ function App() {
     history.push('/sign-in');
   }
 
+  // проверяем есть ли хоть один открытый попап; если есть - ставим обработчик на page, если нет - убираем
+  function checkPopup() {
+    if (
+      isEditProfilePopupOpen ||
+      isAddPlacePopupOpen ||
+      isEditAvatarPopupOpen ||
+      isImagePopupOpen ||
+      isDeletePopupOpen ||
+      infoTooltipShow.isOpen
+    ) {
+        return true
+      }
+    return false
+  }
+  // Павел, спасибо за ревью, заставили задуматься)
+  // Если такое решение некорректно(я всё же пытаюсь использовать только средства реакта) - воспользуюсь Вашим решением
+  // Снятие обработчика контролировал console.log, при закрытии попапов он ничего не выдавал
+  // Закрытие по оверлею организовал средствами реакта, а именно e.stopPropagation(), если есть более оптмальный способ - буду рад новому опыту
+
   return (
-    <div className="page" tabIndex="0">
+    <div className="page" tabIndex="1" onKeyDown={checkPopup() ? handleKeyDown : undefined}>
       <currentUserContext.Provider value={currentUser}>
         <Header
           email={email}
