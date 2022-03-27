@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function PopupWithForm({ name, title, isOpen, onClose, children, onSubmit, submitText="Сохранить" }) {
   function handleClickOverlay(e) {
     e.stopPropagation();

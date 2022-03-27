@@ -63,18 +63,35 @@ function App() {
       })
       .catch(err => console.log(err))
     }
-  }, [history]);
+  }, [history])
 
+  // если залогинены - получаем карточки и информацию о пользователе
   useEffect(() => {
-    setLoader(true);
-    api.renderUserAndCards()
-      .then(([dataUserInfo, dataCards]) => {
-        setCurrentUser(dataUserInfo);
-        setCards(dataCards);
-      })
-      .catch((err) => console.log(err))
-      .finally(() => setLoader(false))
-  }, [])
+    if (loggedIn) {
+      setLoader(true);
+      api.renderUserAndCards()
+        .then(([dataUserInfo, dataCards]) => {
+          setCurrentUser(dataUserInfo);
+          setCards(dataCards);
+        })
+        .catch((err) => console.log(err))
+        .finally(() => setLoader(false))
+    }
+  }, [loggedIn])
+
+  // обработчик на страницу при нажатии ESC
+  useEffect(() => {
+    const closeByEscape = (e) => {
+      if (e.key === 'Escape') {
+        closeAllPopups();
+      }
+    }
+    // Павел, надеюсь правильно понял) Иначе пришлось бы отдельно на каждый попап навешивать...(если так правильно - исправлю в следующей итерации)
+    // Объявляем функцию внутри useEffect, чтобы она не теряла свою ссылку при обновлении компонента.
+    document.addEventListener('keydown', closeByEscape)
+    // Удаляем обработчик в функции, которую возвращает useEffect().
+    return () => document.removeEventListener('keydown', closeByEscape)
+}, [])
 
   function handleEditProfileClick() {
     setIsEditProfilePopupOpen(true);
@@ -173,12 +190,6 @@ function App() {
       .finally(() => setLoader(false))
   }
 
-  function handleKeyDown(e) {
-    if (e.key === 'Escape') {
-      closeAllPopups();
-    }
-  }
-
   function handleInfoTooltip(res) {
     setInfoTooltipShow({ isOpen: true, successful: res })
   }
@@ -205,7 +216,7 @@ function App() {
     setLoader(true);
     auth.login(email, password)
       .then(jwt => {
-        if (jwt.token) { // на счёт этого if неуверен, возможно он лишний и можно без него, ведь условие проверки ответа лежит в логике auth.js
+        if (jwt.token) {
           setEmail(email);
           setLoggedIn(true);
           localStorage.setItem('jwt', jwt.token);
@@ -228,10 +239,9 @@ function App() {
   }
 
   return (
-    <div className="page" onKeyDown={handleKeyDown} tabIndex="0">
+    <div className="page" tabIndex="0">
       <currentUserContext.Provider value={currentUser}>
         <Header
-          loggedIn={loggedIn}
           email={email}
           onSignOut={handleSignOut} />
         <Switch>
