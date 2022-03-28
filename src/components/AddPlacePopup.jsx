@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PopupWithForm from './PopupWithForm.jsx';
 
-export default function AddPlacePopup({ isOpen, onClose, onAddPlace }) {
+export default function AddPlacePopup({ isOpen, onClose, onAddPlace, useEscapePress}) {
   const [cardData, setCardData] = useState({
     name: '',
     link: ''
@@ -31,7 +31,7 @@ export default function AddPlacePopup({ isOpen, onClose, onAddPlace }) {
   }, [isOpen])
 
   return(
-    <PopupWithForm name="create-card" title="Новое место" submitText="Создать" isOpen={isOpen} onClose={onClose} onSubmit={handleAddPlaceSubmit}>
+    <PopupWithForm name="create-card" title="Новое место" submitText="Создать" isOpen={isOpen} onClose={onClose} onSubmit={handleAddPlaceSubmit} useEscapePress={useEscapePress}>
       <fieldset className="popup__info">
         <label className="popup__label">
           <input type="text" placeholder="Название" name="name" value={name} onChange={handleChange} id="create-card__title" minLength="2" maxLength="30" required className="popup__input" />

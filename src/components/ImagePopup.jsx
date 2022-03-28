@@ -1,7 +1,9 @@
-export default function ImagePopup({ card, onClose, isOpen }) {
+export default function ImagePopup({ card, onClose, isOpen, useEscapePress }) {
   function handleClickOverlay(e) {
     e.stopPropagation();
   }
+
+  useEscapePress(onClose, isOpen);
 
   return(
     <div id="popup-picture" className={`popup popup_opasity-high ${isOpen && 'popup_opened'}`} onClick={onClose}>

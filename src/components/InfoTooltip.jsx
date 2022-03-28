@@ -1,7 +1,9 @@
-export default function InfoTooltip({ onClose, status: { isOpen, successful } }) {
+export default function InfoTooltip({ onClose, status: { isOpen, successful }, useEscapePress}) {
   function handleClickOverlay(e) {
     e.stopPropagation();
   }
+
+  useEscapePress(onClose, isOpen);
 
   return(
     <div id="popup-info-tooltip" className={`popup ${isOpen && 'popup_opened'}`} onClick={onClose}>

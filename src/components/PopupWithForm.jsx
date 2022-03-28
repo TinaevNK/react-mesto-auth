@@ -1,9 +1,11 @@
-import React from 'react';
+import React  from 'react';
 
-export default function PopupWithForm({ name, title, isOpen, onClose, children, onSubmit, submitText="Сохранить" }) {
+export default function PopupWithForm({ name, title, isOpen, onClose, children, onSubmit, useEscapePress, submitText="Сохранить" }) {
   function handleClickOverlay(e) {
     e.stopPropagation();
   }
+  // навешиваем обработчик по нажитию Esc
+  useEscapePress(onClose, isOpen);
 
   return(
     <div id={`popup-${name}`} className={`popup ${isOpen && "popup_opened"}`} onClick={onClose}>

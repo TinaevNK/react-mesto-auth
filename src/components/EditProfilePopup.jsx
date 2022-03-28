@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { currentUserContext } from '../contexts/CurrentUserContext.js';
 import PopupWithForm from './PopupWithForm.jsx';
 
-export default function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
+export default function EditProfilePopup({ isOpen, onClose, onUpdateUser, useEscapePress}) {
   const [userData, setUserData] = useState({
     name: '',
     about: ''
@@ -33,7 +33,7 @@ export default function EditProfilePopup({ isOpen, onClose, onUpdateUser }) {
   }
 
   return (
-    <PopupWithForm name="edit" title="Редактировать профиль" isOpen={isOpen} onClose={onClose} onSubmit={handleSubmit}>
+    <PopupWithForm name="edit" title="Редактировать профиль" isOpen={isOpen} onClose={onClose} onSubmit={handleSubmit} useEscapePress={useEscapePress}>
       <fieldset className="popup__info">
         <label className="popup__label">
           <input type="text" placeholder="Имя" name="name" value={name || ''} id="name" minLength="2" maxLength="40" required className="popup__input" onChange={handleChange}/>

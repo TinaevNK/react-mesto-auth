@@ -43,7 +43,7 @@ function App() {
   // лоадер
   const [isLoader, setIsLoader] = useState(false);
   // успех/неудача
-  const [infoTooltipShow, setInfoTooltipShow] = useState({ isOpen: false, successful: false });
+  const [isInfoTooltipShow, setIsInfoTooltipShow] = useState({ isOpen: false, successful: false });
 
   // стейты для входа
   const [loggedIn, setLoggedIn] =  useState(false);
@@ -79,10 +79,22 @@ function App() {
     }
   }, [loggedIn])
 
-  function handleKeyDown(e) {
-    if (e.key === 'Escape') {
-      closeAllPopups()
-    }
+  function useEscapePress(callback, dependency) {
+    useEffect(() => {
+      if (dependency) {
+        const onEscClose = e => {
+          if (e.key === 'Escape') {
+            callback()
+          }
+        }
+        document.addEventListener('keyup', onEscClose);
+        // при размонтировании удалим обработчик данным колбэком
+        return () => {
+          document.removeEventListener('keyup', onEscClose)
+        };
+      }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [dependency])
   }
 
   function handleEditProfileClick() {
@@ -103,7 +115,7 @@ function App() {
     setIsEditAvatarPopupOpen(false);
     setIsImagePopupOpen(false);
     setIsDeletePopupOpen(false);
-    setInfoTooltipShow({ isOpen: false, successful: false })
+    setIsInfoTooltipShow({ isOpen: false, successful: false })
   }
 
   // функция открытия на полный экран картинки
@@ -183,7 +195,7 @@ function App() {
   }
 
   function handleInfoTooltip(res) {
-    setInfoTooltipShow({ isOpen: true, successful: res })
+    setIsInfoTooltipShow({ isOpen: true, successful: res })
   }
 
   // регистрация пользователя
@@ -230,27 +242,8 @@ function App() {
     history.push('/sign-in');
   }
 
-  // проверяем есть ли хоть один открытый попап; если есть - ставим обработчик на page, если нет - убираем
-  function checkPopup() {
-    if (
-      isEditProfilePopupOpen ||
-      isAddPlacePopupOpen ||
-      isEditAvatarPopupOpen ||
-      isImagePopupOpen ||
-      isDeletePopupOpen ||
-      infoTooltipShow.isOpen
-    ) {
-        return true
-      }
-    return false
-  }
-  // Павел, спасибо за ревью, заставили задуматься)
-  // Если такое решение некорректно(я всё же пытаюсь использовать только средства реакта) - воспользуюсь Вашим решением
-  // Снятие обработчика контролировал console.log, при закрытии попапов он ничего не выдавал
-  // Закрытие по оверлею организовал средствами реакта, а именно e.stopPropagation(), если есть более оптмальный способ - буду рад новому опыту
-
   return (
-    <div className="page" tabIndex="1" onKeyDown={checkPopup() ? handleKeyDown : undefined}>
+    <div className="page">
       <currentUserContext.Provider value={currentUser}>
         <Header
           email={email}
@@ -274,31 +267,37 @@ function App() {
           </Route>
         </Switch>
         <Footer />
-        <InfoTooltip
-          onClose={closeAllPopups}
-          status={infoTooltipShow} />
         <Loader
           isOpen={isLoader} />
+        <InfoTooltip
+          onClose={closeAllPopups}
+          status={isInfoTooltipShow}
+          useEscapePress={useEscapePress} />
         <EditProfilePopup
           isOpen={isEditProfilePopupOpen}
           onClose={closeAllPopups}
-          onUpdateUser={handleUpdateUser} />
+          onUpdateUser={handleUpdateUser}
+          useEscapePress={useEscapePress}/>
         <AddPlacePopup
           isOpen={isAddPlacePopupOpen}
           onClose={closeAllPopups}
-          onAddPlace={handleAddPlace} />
+          onAddPlace={handleAddPlace}
+          useEscapePress={useEscapePress} />
         <EditAvatarPopup
           isOpen={isEditAvatarPopupOpen}
           onClose={closeAllPopups}
-          onUpdateAvatar={handleUpdateAvatar} />
+          onUpdateAvatar={handleUpdateAvatar}
+          useEscapePress={useEscapePress} />
         <AcceptDeleteCardPopup
           isOpen={isDeletePopupOpen}
           onClose={closeAllPopups}
-          isAccept={handleDeleteCard} />
+          isAccept={handleDeleteCard}
+          useEscapePress={useEscapePress} />
         <ImagePopup
           card={selectedCard}
           isOpen={isImagePopupOpen}
-          onClose={closeAllPopups} />
+          onClose={closeAllPopups}
+          useEscapePress={useEscapePress} />
       </currentUserContext.Provider>
     </div>
   );
