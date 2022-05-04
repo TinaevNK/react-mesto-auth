@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { currentUserContext } from '../contexts/CurrentUserContext.js';
 
 export default function Card({ card, onCardDelete, onCardClick, onCardLike }) {

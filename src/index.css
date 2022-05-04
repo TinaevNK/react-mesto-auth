@@ -126,8 +126,6 @@
 @import url(./blocks/popup/__close-button/_general/popup__close-button_general.css);
 /* стиль ошибки (span) */
 @import url(./blocks/popup/__error/popup__error.css);
-/* открывающий модификатор для ошибки */
-@import url(./blocks/popup/__error/_opened/popup__error_opened.css);
 /* статус запроса шаблон */
 @import url(./blocks/popup/__status/popup__status.css);
 /* модификатор на успешный запрос */
@@ -149,5 +147,9 @@
 @import url(./blocks/register/__input/register__input.css);
 /* кнопка сабмита */
 @import url(./blocks/register/__button/register__button.css);
+/* модификатор входа */
+@import url(./blocks/register/__button/_disabled/register__button_disabled.css);
 /* Ссылка */
 @import url(./blocks/register/__link/register__link.css);
+/* Ошибка */
+@import url(./blocks/register/__error/register__error.css);

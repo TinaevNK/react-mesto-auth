@@ -1,4 +1,5 @@
-.popup__error {
+.register__error {
+  text-align: left;
   font-size: 12px;
   line-height: 15px;
   color: #FF0000;

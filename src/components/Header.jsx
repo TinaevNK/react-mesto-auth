@@ -1,6 +1,6 @@
 import logo from '../images/logo.svg';
 import { Link, Switch, Route } from 'react-router-dom';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useMediaQuery } from 'react-responsive';
 
 export default function Header({ email, onSignOut }) {

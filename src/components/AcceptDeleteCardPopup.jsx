@@ -7,6 +7,14 @@ export default function AcceptDeleteCardPopup({ isOpen, onClose, isAccept, useEs
   }
 
   return(
-    <PopupWithForm name="delete-card" title="Вы уверены?" submitText="Да" isOpen={isOpen} onClose={onClose} onSubmit={handleDeleteCard} useEscapePress={useEscapePress}/>
+    <PopupWithForm
+      name="delete-card"
+      title="Вы уверены?"
+      submitText="Да"
+      isOpen={isOpen}
+      onClose={onClose}
+      onSubmit={handleDeleteCard}
+      useEscapePress={useEscapePress}
+    />
   )
 }
