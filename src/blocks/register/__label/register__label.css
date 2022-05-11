@@ -1,5 +1,5 @@
 .register__label {
-  margin-bottom: 17px;
+  margin-bottom: 35px;
   display: flex;
   position: relative;
 }
@@ -10,6 +10,10 @@
 
 @media screen and (max-width: 500px) {
   .register__label:last-of-type {
-    margin-bottom: 173px;
+    margin-bottom: 150px;
+  }
+
+  .register__label {
+    margin-bottom: 50px;
   }
 }
